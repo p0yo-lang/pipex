@@ -6,7 +6,7 @@
 /*   By: mmacedo- <mmacedo-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/15 18:06:13 by mmacedo-          #+#    #+#             */
-/*   Updated: 2025/03/16 18:08:56 by mmacedo-         ###   ########.fr       */
+/*   Updated: 2025/03/17 17:14:57 by mmacedo-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,13 +48,12 @@ int	check_files(char **argv)
 	return (0);
 }
 
-/*Check if the command (argv[2]) exists
-**via the check_path_access(char *path) function and print 
-**an error if needed 
-**return 1 if the command doesn't exist or doesn't have execute access
-**return 0 if everything is ok
+/*Check if the command (char *command) exists
+**via the check_path_access(char *path) function and print an error if needed 
+**return the first path the function found
+**return NULL if the command doesn't exist or doesn't have execute access
 */
-int	check_command_access(char *command)
+char	*check_command_access(char *command)
 {
 	const char	*path_set[3];
 	char		*path;
@@ -68,11 +67,11 @@ int	check_command_access(char *command)
 	{
 		path = ft_strjoin(path_set[i], command);
 		if (check_path_access(path) == 0)
-			return (free(path), 0);
+			return (path);
 		free(path);
 		i++;
 	}
-	return (print_error(4, command), 1);
+	return (print_error(4, command), NULL);
 }
 
 /*Prints an error message depending on the error code (int error)
@@ -97,11 +96,17 @@ void	print_error(int error, char *argv)
 */
 int	pipex_check(char **argv)
 {
+	char	*path;
+
 	if (check_files(argv) != 0)
 		return (1);
-	if (check_command_access(argv[2]) != 0)
-		return (1);
-	if (check_command_access(argv[3]) != 0)
-		return (1);
+	path = check_command_access(argv[2]);
+	if (path == NULL)
+		return (free(path), 1);
+	free(path);
+	path = check_command_access(argv[3]);
+	if (path == NULL)
+		return (free(path), 1);
+	free(path);
 	return (0);
 }

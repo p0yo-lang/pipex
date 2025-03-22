@@ -1,11 +1,12 @@
 #include "pipex.h"
 
-int	exec_command(char *command, char **args, char **env)
+int	exec_command(char *command, char **envp)
 {
+	char	**command_array;
 
-}
+	command_array = ft_split(command, ' ');
+	execve(command_array[0], command_array, envp);
+	free(command_array);
+	return (0);
+}	
 
-char	**parse_args(char *command)
-{
-	return (ft_split(command, ' '))
-}
