@@ -17,18 +17,21 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include <fcntl.h>
+# include <sys/wait.h>
+# include <sys/types.h>
 # include "libft.h"
 
 int		check_path_access(char *path);
 int		check_files(char **argv);
 int		create_file(char *file);
-int		pipex_check(char **argv);
-char	*check_command_access(char *command);
+int		pipex_check(char **argv, char **envp);
 int		exec_command(char *command, char **envp);
+int     parent(char **argv, char **envp, int *fd);
+int     child(char **argv, char **envp, int *fd);
+char	*get_path(char *command, char **envp);
+char	*check_command_access(char *command, char **envp);
 char	*read_file(const char *filepath);
-void	print_error(int error, char *argv);
-void left_pipe(char *file, char *command, char **args, int pipe_fd[2], char **envp)
-
-
+void	print_error(char *msg, char *arg);
+void	free_paths(char **paths);
 
 #endif  /* PIPEX_H */

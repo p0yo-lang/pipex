@@ -2,7 +2,7 @@ CC=			cc
 
 CFLAGS=		-Wall -Werror -Wextra -g3 -I./inc -I$(LIBDIR)/inc
 
-FILENAME=	main pipex_error file_utils
+FILENAME=	main pipex_error file_utils pipe_utils env_utils
 
 SOURCEDIR = src/
 INCDIR = inc/

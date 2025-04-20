@@ -12,25 +12,39 @@
 
 #include "pipex.h"
 
-/* */
-void left_pipe(char *file, char *command, int pipe_fd[2], char **envp)
+/**
+ * Sets up the child process to execute the first command.
+ * Redirects output from the pipe and input to the given file.
+ * Returns -1 if the input file can't be opened.
+ */
+int	child(char **argv, char **envp, int *fd)
 {
-	int	fd;
+	int		filein;
 
-	fd = open(file, O_RDONLY);
-	dup2(fd, 0);
-	dup2(pipe_fd[1], 1);
-	close(pipe_fd[0]);
-	exec_command(command, envp);
+	filein = open(argv[1], O_RDONLY, 0777);
+	if (filein == -1)
+		return (-1);
+	dup2(fd[1], STDOUT_FILENO);
+	dup2(filein, STDIN_FILENO);
+	close(fd[0]);
+	exec_command(argv[2], envp);
+	return (0);
 }
-
-void right_pipe(char *file, char *command, int pipe_fd[2], char **envp)
+/**
+ * Sets up the parent process to execute the second command.
+ * Redirects input from the pipe and output to the given file.
+ * Returns -1 if the output file can't be opened.
+ */
+int	parent(char **argv, char **envp, int *fd)
 {
-	int	fd;
+	int		fileout;
 
-	fd = open(file, 1);
-	dup2(fd, 1);
-	dup2(pipe_fd[0], 0);
-	close(pipe_fd[0]);
-	exec_command(command, envp);
+	fileout = open(argv[4], O_WRONLY | O_CREAT | O_TRUNC, 0777);
+	if (fileout == -1)
+		return (-1);
+	dup2(fd[0], STDIN_FILENO);
+	dup2(fileout, STDOUT_FILENO);
+	close(fd[1]);
+	exec_command(argv[3], envp);
+	return (0);
 }
